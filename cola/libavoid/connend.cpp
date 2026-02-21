@@ -332,11 +332,12 @@ void ConnEnd::assignPinVisibilityTo(VertInf *dummyConnectionVert,
                 // exclusive, so give it visibility.
                 EdgeInf *edge = new EdgeInf(dummyConnectionVert,
                         currPin->m_vertex, true);
-                // XXX Can't use a zero cost due to assumptions 
-                //     elsewhere in code.
-                edge->setDist(manhattanDist(dummyConnectionVert->point,
-                            currPin->m_vertex->point) + 
-                        std::max(0.001, routingCost));
+                // Only include the connection cost, not the
+                // geometric distance.  The distance from the
+                // dummy helper to the pin is artificial (dummy
+                // is at shape centre) and the A* already
+                // accounts for the real path length.
+                edge->setDist(std::max(0.001, routingCost));
             }
 
             if (router->m_allows_polyline_routing)
@@ -345,11 +346,10 @@ void ConnEnd::assignPinVisibilityTo(VertInf *dummyConnectionVert,
                 // exclusive, so give it visibility.
                 EdgeInf *edge = new EdgeInf(dummyConnectionVert,
                         currPin->m_vertex, false);
-                // XXX Can't use a zero cost due to assumptions 
-                //     elsewhere in code.
-                edge->setDist(euclideanDist(dummyConnectionVert->point,
-                            currPin->m_vertex->point) + 
-                        std::max(0.001, routingCost));
+                // Only include the connection cost, not the
+                // geometric distance (see orthogonal comment
+                // above).
+                edge->setDist(std::max(0.001, routingCost));
             }
 
             // Increment the number of valid pins for this ConnEnd connection.

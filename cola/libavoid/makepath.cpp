@@ -1442,9 +1442,12 @@ void AStarPathPrivate::search(ConnRef *lineRef, VertInf *src, VertInf *tar, Vert
                 
                 if (node.inf->id.isDummyPinHelper())
                 {
-                    // This is connecting to a connection pin helper vertex.
-                    // There should be no additional cost for this step.
-                    node.g = bestNode->g;
+                    // This is connecting to a connection pin
+                    // helper vertex.  The edge distance only
+                    // contains the connection cost (no geometric
+                    // distance), so add it to preserve pin
+                    // preference.
+                    node.g = bestNode->g + edgeDist;
                 }
                 else
                 {
